@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Almack's of 67 Orange Street — Opening Update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:#111009;color:#E8DFC8;min-height:100vh;}
+
+/* ── LOCK SCREEN ── */
+#lock{position:fixed;inset:0;z-index:1000;background:#111009;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+.lock-orn{width:160px;height:1px;background:linear-gradient(90deg,transparent,#B8892A,transparent);margin-bottom:28px;}
+.lock-logo{font-family:'Playfair Display',serif;color:#D4A84B;font-size:26px;font-weight:600;letter-spacing:0.08em;text-align:center;margin-bottom:4px;}
+.lock-sub{font-size:10px;color:rgba(212,168,75,0.45);letter-spacing:0.2em;text-transform:uppercase;text-align:center;margin-bottom:36px;}
+.lock-form{display:flex;flex-direction:column;align-items:center;gap:10px;width:260px;}
+.lock-input{width:100%;background:rgba(212,168,75,0.06);border:0.5px solid rgba(212,168,75,0.25);border-radius:4px;padding:11px 14px;font-family:'DM Sans',sans-serif;font-size:13px;color:#E8DFC8;letter-spacing:0.1em;text-align:center;outline:none;transition:border-color 0.2s;}
+.lock-input::placeholder{color:rgba(212,168,75,0.28);}
+.lock-input:focus{border-color:rgba(212,168,75,0.55);}
+.lock-btn{width:100%;background:transparent;border:0.5px solid #B8892A;border-radius:4px;padding:10px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;color:#D4A84B;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background 0.2s;}
+.lock-btn:hover{background:rgba(212,168,75,0.08);}
+.lock-err{font-size:10px;color:#E24B4A;min-height:14px;text-align:center;}
+
+/* ── MAIN ── */
+#app{display:none;}
+nav{background:#1A1410;border-bottom:0.5px solid rgba(212,168,75,0.12);padding:14px 32px;position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.nav-logo{font-family:'Playfair Display',serif;color:#D4A84B;font-size:16px;font-weight:600;letter-spacing:0.05em;}
+.nav-sub{font-size:9px;color:rgba(212,168,75,0.4);letter-spacing:0.12em;text-transform:uppercase;margin-top:2px;}
+.nav-right{display:flex;gap:6px;flex-wrap:wrap;}
+.nav-badge{font-size:10px;padding:3px 10px;border-radius:20px;border:0.5px solid;letter-spacing:0.04em;white-space:nowrap;}
+.nb-red{background:rgba(226,75,74,0.1);border-color:rgba(226,75,74,0.35);color:#E24B4A;}
+.nb-amber{background:rgba(184,137,42,0.1);border-color:rgba(184,137,42,0.35);color:#D4A84B;}
+.nb-green{background:rgba(99,153,34,0.1);border-color:rgba(99,153,34,0.3);color:#8fd44f;}
+.nb-lock{cursor:pointer;background:transparent;border-color:rgba(212,168,75,0.12);color:rgba(212,168,75,0.3);font-size:10px;padding:3px 10px;border-radius:20px;border:0.5px solid;}
+.nb-lock:hover{color:#D4A84B;border-color:rgba(212,168,75,0.35);}
+
+.container{max-width:960px;margin:0 auto;padding:40px 24px 80px;}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:60px 0 40px;}
+.hero-eyebrow{font-size:10px;color:rgba(212,168,75,0.5);letter-spacing:0.2em;text-transform:uppercase;margin-bottom:16px;}
+.hero-title{font-family:'Playfair Display',serif;font-size:clamp(28px,5vw,52px);font-weight:600;color:#E8DFC8;line-height:1.2;margin-bottom:12px;}
+.hero-title span{color:#D4A84B;}
+.hero-sub{font-size:15px;color:rgba(232,223,200,0.6);max-width:540px;margin:0 auto;line-height:1.75;}
+.hero-orn{width:120px;height:1px;background:linear-gradient(90deg,transparent,#B8892A,transparent);margin:28px auto 0;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:32px;justify-content:center;}
+.tab{font-size:11px;font-weight:500;padding:6px 14px;border-radius:20px;border:0.5px solid rgba(212,168,75,0.2);background:transparent;cursor:pointer;color:rgba(212,168,75,0.5);transition:all 0.15s;white-space:nowrap;}
+.tab.active{background:#1A1410;color:#D4A84B;border-color:#B8892A;}
+.tab:hover:not(.active){color:#D4A84B;border-color:rgba(212,168,75,0.4);}
+.panel{display:none;}.panel.active{display:block;}
+
+/* ── SECTION ── */
+.sec-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#D4A84B;margin-bottom:6px;}
+.sec-divider{height:1px;background:linear-gradient(90deg,#B8892A,transparent);margin-bottom:20px;}
+
+/* ── MILESTONE TIMELINE ── */
+.phase-block{margin-bottom:4px;}
+.phase-hdr{background:#1A1410;border:0.5px solid rgba(212,168,75,0.12);border-radius:8px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:16px;margin-bottom:4px;flex-wrap:wrap;gap:6px;}
+.phase-hdr.green{border-color:rgba(99,153,34,0.2);}
+.phase-name{font-family:'Playfair Display',serif;font-size:13px;font-weight:600;color:#D4A84B;}
+.phase-hdr.green .phase-name{color:#8fd44f;}
+.phase-dates{font-size:10px;color:rgba(212,168,75,0.38);letter-spacing:0.04em;}
+.milestone{display:flex;gap:12px;padding:10px 0;border-bottom:0.5px solid rgba(212,168,75,0.07);align-items:flex-start;}
+.milestone:last-child{border-bottom:none;}
+.m-date{min-width:80px;font-size:10px;font-weight:500;color:#B8892A;padding-top:2px;line-height:1.4;flex-shrink:0;}
+.m-dot-col{display:flex;flex-direction:column;align-items:center;padding-top:4px;flex-shrink:0;}
+.m-dot{width:8px;height:8px;border-radius:50%;}
+.m-line{width:1px;flex:1;background:rgba(212,168,75,0.08);margin-top:4px;min-height:18px;}
+.m-content{flex:1;}
+.m-title{font-weight:500;font-size:13px;color:#E8DFC8;margin-bottom:2px;line-height:1.4;}
+.m-desc{font-size:11px;color:rgba(212,168,75,0.5);line-height:1.6;}
+
+/* ── COCKTAIL CHAPTERS ── */
+.chapters-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:20px;}
+.chapter-card{background:rgba(212,168,75,0.04);border:0.5px solid rgba(212,168,75,0.12);border-radius:10px;padding:16px;position:relative;overflow:hidden;}
+.chapter-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#B8892A;}
+.ch-num{font-size:9px;color:rgba(212,168,75,0.5);font-weight:500;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:3px;}
+.ch-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:#E8DFC8;margin-bottom:2px;}
+.ch-theme{font-size:11px;color:rgba(212,168,75,0.5);font-style:italic;margin-bottom:10px;}
+.ch-cocktail-name{font-weight:500;font-size:13px;color:#D4A84B;margin-bottom:3px;}
+.ch-cocktail-desc{font-size:11px;color:rgba(232,223,200,0.6);line-height:1.55;}
+
+/* ── NARRATIVE ── */
+.nar-card{background:rgba(212,168,75,0.04);border:0.5px solid rgba(212,168,75,0.12);border-radius:10px;padding:20px 22px;margin-bottom:14px;}
+.nar-body{font-size:13px;color:rgba(232,223,200,0.78);line-height:1.85;}
+.nar-pull{border-left:3px solid #B8892A;padding:10px 16px;margin:16px 0;font-family:'Playfair Display',serif;font-size:14px;color:#D4A84B;font-style:italic;line-height:1.65;}
+
+/* ── PR TIMELINE ── */
+.pr-row{display:flex;gap:14px;padding:10px 0;border-bottom:0.5px solid rgba(212,168,75,0.07);align-items:flex-start;}
+.pr-row:last-child{border-bottom:none;}
+.pr-wk{min-width:70px;font-size:10px;color:#B8892A;font-weight:500;padding-top:2px;flex-shrink:0;}
+.pr-dot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0;}
+.pr-title{font-size:12px;font-weight:500;color:#E8DFC8;margin-bottom:2px;}
+.pr-detail{font-size:11px;color:rgba(212,168,75,0.48);line-height:1.55;}
+
+/* ── FINANCIAL OVERVIEW ── */
+.fin-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px;}
+.fin-card{background:rgba(212,168,75,0.05);border:0.5px solid rgba(212,168,75,0.12);border-radius:10px;padding:14px 16px;}
+.fin-label{font-size:10px;color:rgba(212,168,75,0.45);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:5px;}
+.fin-value{font-size:22px;font-weight:500;font-variant-numeric:tabular-nums;}
+.fin-sub{font-size:10px;color:rgba(212,168,75,0.38);margin-top:3px;}
+.fv-gold{color:#D4A84B;}.fv-green{color:#8fd44f;}.fv-white{color:#E8DFC8;}
+
+.prog-wrap{background:rgba(212,168,75,0.04);border:0.5px solid rgba(212,168,75,0.12);border-radius:10px;padding:14px 16px;margin-bottom:16px;}
+.prog-label{font-size:11px;color:rgba(212,168,75,0.55);margin-bottom:6px;display:flex;justify-content:space-between;}
+.prog-bar{height:6px;background:rgba(212,168,75,0.1);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#B8892A,#D4A84B);border-radius:4px;}
+
+/* ── RETURNS TABLE ── */
+.returns-note{background:rgba(212,168,75,0.05);border:0.5px solid rgba(212,168,75,0.12);border-radius:10px;padding:16px 18px;margin-top:16px;}
+.returns-title{font-family:'Playfair Display',serif;font-size:14px;color:#D4A84B;margin-bottom:10px;}
+.returns-list{list-style:none;}
+.returns-list li{font-size:12px;color:rgba(232,223,200,0.72);padding:5px 0;border-bottom:0.5px solid rgba(212,168,75,0.07);line-height:1.6;}
+.returns-list li:last-child{border-bottom:none;}
+.returns-list li strong{color:#D4A84B;font-weight:500;}
+
+/* ── FOOTER ── */
+footer{background:#1A1410;border-top:0.5px solid rgba(212,168,75,0.1);padding:28px 32px;text-align:center;margin-top:60px;}
+.footer-logo{font-family:'Playfair Display',serif;color:#D4A84B;font-size:14px;margin-bottom:6px;}
+.footer-sub{font-size:10px;color:rgba(212,168,75,0.35);letter-spacing:0.08em;}
+
+@media(max-width:600px){
+  .container{padding:24px 16px 60px;}
+  .hero{padding:40px 0 28px;}
+  nav{padding:12px 16px;}
+  .nav-right{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOCK -->
+<div id="lock">
+  <div class="lock-orn"></div>
+  <div class="lock-logo">ALMACK'S</div>
+  <div class="lock-sub">of 67 Orange Street · Investor Portal</div>
+  <div class="lock-form">
+    <input class="lock-input" type="password" id="pw" placeholder="Access code" autocomplete="off">
+    <button class="lock-btn" onclick="unlock()">Enter</button>
+    <div class="lock-err" id="pw-err"></div>
+  </div>
+  <div class="lock-orn" style="margin-top:32px;margin-bottom:0;"></div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <nav>
+    <div>
+      <div class="nav-logo">ALMACK'S of 67 Orange Street</div>
+      <div class="nav-sub">Investor Portal · Confidential</div>
+    </div>
+    <div class="nav-right">
+      <span class="nav-badge nb-amber">Rehearsals: May 27–29</span>
+      <span class="nav-badge nb-red">Soft open: Jun 9</span>
+      <span class="nav-badge nb-green">Public open: Jun 23</span>
+      <span class="nb-lock" onclick="lockout()">Lock ⌐</span>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="hero">
+      <div class="hero-eyebrow">Almack's Gathering Hall LLC · Investor Update · April 2026</div>
+      <div class="hero-title">A bar built from <span>stories</span>.<br>A menu made of <span>time</span>.</div>
+      <div class="hero-sub">Since December 2008, 67 Orange Street defined Harlem's cocktail renaissance. The next chapter is almost ready to open its doors.</div>
+      <div class="hero-orn"></div>
+    </div>
+
+    <div class="tabs" id="tabs-bar"></div>
+
+    <!-- MILESTONES -->
+    <div id="tab-milestones" class="panel active">
+      <div class="sec-title">Opening roadmap</div>
+      <div class="sec-divider"></div>
+      <div id="ml-ph1"></div>
+      <div id="ml-ph2"></div>
+      <div id="ml-ph3"></div>
+      <div id="ml-ph4"></div>
+      <div id="ml-ph5"></div>
+    </div>
+
+    <!-- STORY -->
+    <div id="tab-story" class="panel">
+      <div class="sec-title">Why Almack's</div>
+      <div class="sec-divider"></div>
+      <div class="nar-card">
+        <div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:#E8DFC8;margin-bottom:12px;">A Time-Traveler's Speakeasy</div>
+        <div class="nar-body">In 1765 London, William Almack opened grand assembly rooms — the axis of Regency high society, entry controlled by Lady Patronesses who denied the wrong bow, the wrong garment, the wrong guest. Prestige as gatekeeping.</div>
+        <div class="nar-pull">"By invoking that name, Williams made a declaration: this is prestige — but defined on our own terms."</div>
+        <div class="nar-body">In 1840s Five Points, a free Black man named Pete Williams borrowed that name and turned it inside out. His Almack's Dance Hall at 67 Orange Street welcomed Irish jiggers and African American shuffle-dancers alike. From that collision, tap dance was born.</div>
+      </div>
+      <div class="nar-card" style="margin-top:14px;">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#E8DFC8;margin-bottom:10px;">The narrative arc</div>
+        <div class="nar-body">Our cocktail menu unfolds as a time-travel story. Pete Williams builds Almack's from forbidden love and exile. Master Juba — William Henry Lane — arrives and invents tap dance on Pete's floorboards. A fire drives them through time into Harlem 1926, where rent parties, speakeasies, and jazz royalty await. A mysterious stranger appears in the smoke. Together, they dream up the permanent version of Almack's.</div>
+        <div class="nar-pull">"The loop closes: you are standing in the place they built."</div>
+        <div class="nar-body">Each of the seven cocktails is a chapter. The menu is a book. The stranger's name is Karl Franz Williams.</div>
+      </div>
+      <div class="nar-card" style="margin-top:14px;">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:#E8DFC8;margin-bottom:10px;">What 67 Orange Street built</div>
+        <div class="nar-body">For nearly 16 years, 67 Orange Street ranked among New York City's top cocktail destinations — featured in Esquire's Top 27 Bars in America, World's 50 Best Discovery, and Condé Nast Traveler's 26 Best Bars in NYC. It survived the Great Recession and the COVID-19 pandemic. It created a community, not just a bar.</div>
+        <div class="nar-body" style="margin-top:10px;">Almack's of 67 Orange Street is the evolution — a larger space, a richer story, and the infrastructure to sustain it for the next 16 years.</div>
+      </div>
+    </div>
+
+    <!-- COCKTAIL MENU -->
+    <div id="tab-menu" class="panel">
+      <div class="sec-title">The opening menu — 7 chapters</div>
+      <div class="sec-divider"></div>
+      <div class="chapters-grid" id="chapters-grid"></div>
+    </div>
+
+    <!-- PR & BUZZ -->
+    <div id="tab-pr" class="panel">
+      <div class="sec-title">Building the buzz — PR runway</div>
+      <div class="sec-divider"></div>
+      <div style="font-size:12px;color:rgba(212,168,75,0.5);margin-bottom:16px;line-height:1.7;">Rachel Harrison Communications — specialists in hospitality and craft cocktail bars — officially launched our 8-week pre-opening campaign on May 1. The timeline below shows how coverage builds toward the June 9 soft open and June 23 public opening.</div>
+      <div id="pr-timeline"></div>
+    </div>
+
+    <!-- FINANCIALS -->
+    <div id="tab-financials" class="panel">
+      <div class="sec-title">Financial overview</div>
+      <div class="sec-divider"></div>
+      <div class="fin-grid">
+        <div class="fin-card"><div class="fin-label">Capital raised</div><div class="fin-value fv-gold">$201,500</div><div class="fin-sub">of $350,000 goal</div></div>
+        <div class="fin-card"><div class="fin-label">Projected annual revenue</div><div class="fin-value fv-green">$1,232,010</div><div class="fin-sub">benchmarked vs. 67 Orange Street</div></div>
+        <div class="fin-card"><div class="fin-label">Projected net margin</div><div class="fin-value fv-white">22%</div><div class="fin-sub">monthly, stabilized operations</div></div>
+        <div class="fin-card"><div class="fin-label">Monthly net income (proj.)</div><div class="fin-value fv-green">$27,472</div><div class="fin-sub">after mgmt fee, before distributions</div></div>
+      </div>
+
+      <div class="prog-wrap">
+        <div class="prog-label"><span>Fundraise progress</span><span style="color:#D4A84B;font-weight:500;">$201,500 / $350,000 — 57.6%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:57.6%"></div></div>
+      </div>
+
+      <div style="height:220px;position:relative;margin-bottom:20px;">
+        <canvas id="plChart" role="img" aria-label="Projected monthly P&L showing income, costs, and net profit">Monthly P&L projections.</canvas>
+      </div>
+
+      <div class="returns-note">
+        <div class="returns-title">Investor return structure</div>
+        <ul class="returns-list">
+          <li><strong>Units issued:</strong> 100,000 total at $10/unit. 35,000 units available to investors (35% equity stake).</li>
+          <li><strong>Investor payback priority:</strong> Investors receive 80% of profits after expenses until 110% of their investment is returned.</li>
+          <li><strong>After full payback:</strong> Investors receive their pro-rata share of ongoing profits.</li>
+          <li><strong>Management fee:</strong> 5% of gross revenue (minimum $50,000 guaranteed payment).</li>
+          <li><strong>Reporting:</strong> Quarterly and annual performance reports with full financial statements.</li>
+          <li><strong>Distributions:</strong> Quarterly profit distributions once operations are stabilized.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <footer>
+    <div class="footer-logo">ALMACK'S of 67 Orange Street</div>
+    <div class="footer-sub">1890 Adam Clayton Powell Jr Blvd · Harlem, NY 10026 · 646-734-0794</div>
+    <div class="footer-sub" style="margin-top:6px;">Almack's Gathering Hall LLC · Confidential Investor Update · April 2026</div>
+  </footer>
+</div><!-- /app -->
+
+<script>
+/* ── AUTH ── */
+const CODE = 'almacks2026';
+function unlock(){
+  const v=document.getElementById('pw').value;
+  if(v===CODE){
+    document.getElementById('lock').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    document.getElementById('pw-err').textContent='Incorrect access code.';
+    document.getElementById('pw').value='';
+    setTimeout(()=>document.getElementById('pw-err').textContent='',3000);
+  }
+}
+function lockout(){
+  document.getElementById('app').style.display='none';
+  document.getElementById('lock').style.display='flex';
+  document.getElementById('pw').value='';
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('lock').style.display!=='none') unlock();
+});
+
+/* ── TABS ── */
+const TABS=[
+  {id:'milestones',label:'Opening Roadmap'},
+  {id:'story',label:'The Story'},
+  {id:'menu',label:'The Menu'},
+  {id:'pr',label:'PR & Buzz'},
+  {id:'financials',label:'Financials'},
+];
+function switchTab(id){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('tb-'+id).classList.add('active');
+}
+
+/* ── MILESTONES DATA ── */
+const PHASES=[
+  {key:'ph1',label:'Phase 1 — Apr 20 – May 4',sub:'Build-out finishing · Licensing · Hiring',green:false,items:[
+    {date:'Apr 21–25',title:'SLA liquor license conditions submitted',desc:'Required documentation filed with NY State Liquor Authority. Conditional approval already received March 19.',dot:'#E24B4A'},
+    {date:'Apr 21–30',title:'Final construction completing',desc:'Electrical, banquettes, façade carpentry, and FF&E installation. Space on track for full completion by late May.',dot:'#B8892A'},
+    {date:'Apr 21–30',title:'Front-of-house hiring begins',desc:'Monica building the full service team. Core staff targeted by May 9.',dot:'#B8892A'},
+    {date:'Apr 21–30',title:'Cocktail chapter specs finalized',desc:'Omar and Karl locking all 7 chapter recipes before the initial spirits order.',dot:'#B8892A'},
+    {date:'May 1',title:'Rachel Harrison PR officially launches',desc:'8-week campaign begins. Media list building, editorial pitching, long-lead magazine submissions.',dot:'#D4A84B'},
+  ]},
+  {key:'ph2',label:'Phase 2 — May 5–18',sub:'Space complete · Team in place · Training week',green:false,items:[
+    {date:'May 5–9',title:'Bar physically complete',desc:'Back bar, mirror, tabletops, and stainless installed. Triggers bar equipment setup sequence.',dot:'#888780'},
+    {date:'May 5–16',title:'Full team hired and onboarded',desc:'FOH, BOH, and kitchen staff fully hired. All systems — POS, Resy, Spectrum — live and tested.',dot:'#888780'},
+    {date:'May 12–18',title:'Training week',desc:'Bar team drills all 7 cocktail chapters. Floor team runs service standards, steps of service, and POS training.',dot:'#888780'},
+    {date:'May 20',title:'Sound system installed and tuned',desc:'AV installation complete with room correction sweep. Listening bar spec: even coverage at 75–85 dB across all 40 seats.',dot:'#888780'},
+  ]},
+  {key:'ph3',label:'Phase 3 — DRESS REHEARSALS: May 27–29',sub:'Memorial Day weekend · 3 private nights · Full service',green:false,items:[
+    {date:'May 27',title:'Dress Rehearsal Night 1 — Inner circle',desc:'Friends, family, and close collaborators. Real service, real checks, real music. This is where we find the gaps.',dot:'#6C3483'},
+    {date:'May 28',title:'Dress Rehearsal Night 2 — Industry',desc:'Fellow bartenders, chefs, and hospitality peers. Trained eyes will catch what guests miss.',dot:'#6C3483'},
+    {date:'May 29',title:'Dress Rehearsal Night 3 — Community',desc:'Harlem community, 67 Orange faithful, and neighborhood anchors. The people who matter most.',dot:'#6C3483'},
+  ]},
+  {key:'ph4',label:'Phase 4 — Refinement: May 30 – Jun 8',sub:'Fix everything · Press preview · Final prep',green:false,items:[
+    {date:'May 30–Jun 5',title:'Post-rehearsal refinements',desc:'Full team addresses every gap identified across 3 rehearsal nights — recipes, pacing, floor flow, kitchen timing.',dot:'#888780'},
+    {date:'Jun 1–8',title:'Rachel Harrison press preview',desc:'Select media and food writers invited for a private walk-through. Advance reviews drafted under embargo.',dot:'#B8892A'},
+    {date:'Jun 8',title:'Full systems check',desc:'Every station, every system, every team member ready. Nothing surprises us on June 9.',dot:'#888780'},
+  ]},
+  {key:'ph5',label:'Phase 5 — SOFT OPEN & PUBLIC LAUNCH: Jun 9–23',sub:'Invite-only soft open → full public operations',green:true,items:[
+    {date:'Jun 9',title:'SOFT OPEN Night 1 — Investors & Inner Circle',desc:'The doors open for you first. An invite-only evening for investors and closest collaborators. Karl toasts.',dot:'#8fd44f'},
+    {date:'Jun 10',title:'SOFT OPEN Night 2 — Press & Industry',desc:'Rachel Harrison\'s media list. Embargoed coverage drops. First reviews and social posts go live.',dot:'#8fd44f'},
+    {date:'Jun 11–14',title:'SOFT OPEN Nights 3–5 — Community',desc:'Extended Harlem community, the Chairholders legacy list, and 67 Orange faithful. Word of mouth ignites.',dot:'#8fd44f'},
+    {date:'Jun 23',title:'PUBLIC OPENING — Full operations begin',desc:'Resy open to all. 7 days a week. 43 hours. The story that refused to burn — continues.',dot:'#8fd44f'},
+  ]},
+];
+
+/* ── CHAPTERS ── */
+const CHAPTERS=[
+  {num:'I',title:'Forbidden Love',theme:'Pete Williams leaves London — exiled but unbroken',cocktail:'Forbidden Love',desc:'Bergamot gin Negroni riff — bitter, beautiful, and smoked with palo santo'},
+  {num:'II',title:"Juba's Ghost",theme:'Master Juba arrives — tap dance is born',cocktail:"Juba's Ghost",desc:'A mai tai transformed — Jamaican rum, Irish whiskey, jerk rice syrup'},
+  {num:'III',title:'Gold Rush',theme:'Fire, whiskey, and the portal through time',cocktail:'Gold Rush',desc:'Corn whiskey and charred peach — gritty as the Great Migration, golden as the Renaissance'},
+  {num:'IV',title:"Campbell's Map",theme:'A stranger appears in Harlem 1926',cocktail:'Shiitake Sazerac',desc:'Cognac and rye with umami brown butter — a Sazerac that tastes like a secret'},
+  {num:'V',title:'The Rent Party',theme:'Harlem 1926 — jazz is currency',cocktail:'Clarified Nutcracker',desc:"NYC's beloved street cocktail, clarified and elevated — served frozen in 4oz bottles"},
+  {num:'VI',title:'Burn the House Down',theme:'One week of creation — then back to their timelines',cocktail:'Burn the House Down',desc:'Mezcal and smoked cherry — defiance in a coupe'},
+  {num:'VII',title:'The Encore',theme:"The loop closes. Welcome to Almack's.",cocktail:'The Encore',desc:'Light, bitter, fire-touched — the perfect last word and the best first sip'},
+];
+
+/* ── PR ── */
+const PR=[
+  {wk:'May 1–7',title:'Weeks 1–2 — Foundation & outreach',detail:'Media list building. Outreach to key food and culture editors. Long-lead magazine submissions. Press kit finalized.',color:'#B8892A'},
+  {wk:'May 8–21',title:'Weeks 3–4 — Editorial seeding',detail:'Pitching story angles to NYT Food, Eater NY, Bon Appétit, Punch Drink, Time Out NY. Pete Williams and Master Juba narrative as the hook.',color:'#B8892A'},
+  {wk:'May 22–Jun 4',title:'Weeks 5–6 — Press preview',detail:'Select media invited for private walk-through and tasting. Advance reviews drafted. Embargo set: June 9.',color:'#D4A84B'},
+  {wk:'Jun 5–8',title:'Week 7 — Embargo prep',detail:'Coverage queued. Journalists\' social posts scheduled. Resy opens to press and investor list.',color:'#D4A84B'},
+  {wk:'Jun 9',title:'SOFT OPEN — Coverage goes live',detail:'Embargoed press drops. First posts from journalists and influencers. Eater NY, Time Out, Punch Drink.',color:'#8fd44f'},
+  {wk:'Jun 10–22',title:'Week 8 — Sustained momentum',detail:'Follow-up coverage, podcasts, Instagram and TikTok reels from opening nights.',color:'#8fd44f'},
+  {wk:'Jun 23',title:'Public opening — full amplification',detail:"Rachel's 8-week campaign pays off. National outlets targeted. Walk-in traffic from press-driven awareness begins.",color:'#8fd44f'},
+];
+
+/* ── RENDER ── */
+function renderMilestones(){
+  PHASES.forEach(ph=>{
+    const el=document.getElementById('ml-'+ph.key);
+    if(!el) return;
+    const hdr=document.createElement('div');
+    hdr.className='phase-hdr'+(ph.green?' green':'');
+    hdr.innerHTML=`<div class="phase-name">${ph.label}</div><div class="phase-dates">${ph.sub}</div>`;
+    el.appendChild(hdr);
+    ph.items.forEach((m,i)=>{
+      const last=i===ph.items.length-1;
+      const d=document.createElement('div');
+      d.className='milestone';
+      d.innerHTML=`<div class="m-date">${m.date}</div><div class="m-dot-col"><div class="m-dot" style="background:${m.dot};"></div>${!last?'<div class="m-line"></div>':''}</div><div class="m-content"><div class="m-title">${m.title}</div><div class="m-desc">${m.desc}</div></div>`;
+      el.appendChild(d);
+    });
+  });
+}
+
+function renderChapters(){
+  const el=document.getElementById('chapters-grid');
+  CHAPTERS.forEach(c=>{
+    const d=document.createElement('div');
+    d.className='chapter-card';
+    d.innerHTML=`<div class="ch-num">Chapter ${c.num}</div><div class="ch-title">${c.title}</div><div class="ch-theme">${c.theme}</div><div class="ch-cocktail-name">${c.cocktail}</div><div class="ch-cocktail-desc">${c.desc}</div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderPR(){
+  const el=document.getElementById('pr-timeline');
+  PR.forEach(p=>{
+    const d=document.createElement('div');
+    d.className='pr-row';
+    d.innerHTML=`<div class="pr-wk">${p.wk}</div><div class="pr-dot" style="background:${p.color};"></div><div><div class="pr-title">${p.title}</div><div class="pr-detail">${p.detail}</div></div>`;
+    el.appendChild(d);
+  });
+}
+
+function renderChart(){
+  new Chart(document.getElementById('plChart'),{
+    type:'bar',
+    data:{
+      labels:['Food Revenue','Beverage Revenue','COGS','Labor','Rent','Other Ops','Net Income'],
+      datasets:[{
+        data:[20518,82071,-22159,-33177,-4699,-15081,27473],
+        backgroundColor:['#27AE60','#27AE60','#E24B4A','#E24B4A','#E24B4A','#E24B4A','#D4A84B'],
+      }]
+    },
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>{const v=ctx.raw;return(v<0?'-$'+Math.abs(v).toLocaleString():'$'+v.toLocaleString());}}}},
+      scales:{
+        x:{ticks:{color:'rgba(212,168,75,0.5)',font:{size:9}},grid:{color:'rgba(212,168,75,0.05)'}},
+        y:{ticks:{color:'rgba(212,168,75,0.5)',callback:v=>(v<0?'-$'+Math.abs(v/1000)+'k':'$'+v/1000+'k'),font:{size:9}},grid:{color:'rgba(212,168,75,0.05)'}}
+      }
+    }
+  });
+}
+
+function init(){
+  // Build tabs
+  const bar=document.getElementById('tabs-bar');
+  TABS.forEach(t=>{
+    const btn=document.createElement('button');
+    btn.className='tab'+(t.id==='milestones'?' active':'');
+    btn.id='tb-'+t.id; btn.textContent=t.label;
+    btn.onclick=()=>switchTab(t.id);
+    bar.appendChild(btn);
+  });
+  renderMilestones();
+  renderChapters();
+  renderPR();
+  renderChart();
+}
+</script>
+</body>
+</html>
